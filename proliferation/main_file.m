@@ -40,7 +40,7 @@ for i=1:length(filename)
         case {'dead','wt'}
             colors_cell = {'#3DA5D9','#3DA5D9','#0C0808','#CE9600','#ED8A07','#B35C05'};
             condition_cell = {'ZD2','ZD + 3µM Zn','Minimal Media','ZR15','ZR30','No Chx'};
-            conditions_to_plot = [1, 3, 4, 5];
+            conditions_to_plot = [1,2, 3, 4, 5,6];
             y_min = 3;
             y_max = 6.5;
             
