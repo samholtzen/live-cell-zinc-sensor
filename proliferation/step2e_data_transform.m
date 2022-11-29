@@ -1,9 +1,9 @@
-%this one takes the signals and plots them aligned to mitosis to visualize
-%average FRET curve after mitosis
-all_FRET_mean = [];
+
 rng(1)
 
 for c=conditions_to_plot
+    
+    
     
     condition_index = find(conditions_to_plot == c);
     
@@ -45,18 +45,9 @@ for c=conditions_to_plot
     %create frame fector
     frame_vec = 1:num_frames;
     
-    % Take the average of 500 of the tracks to save on time
-    if length(filtered_mitosis) > 500
-        
-        rand_tracks = randi(length(filtered_mitosis),1,500);
-        
-    else
-        
-        rand_tracks = 1:length(filtered_mitosis);
-        
-    end
+    rand_tracks = randi(numel(filtered_mitosis),1,1000);
     
-    for track = rand_tracks
+    for track = 1:numel(filtered_mitosis)
         
         %get the signals out from the "store" variables
         mitoses = filtered_mitosis{track};
@@ -67,17 +58,28 @@ for c=conditions_to_plot
         for i=mitoses
             
             first_mit = i;
+            FRET_store_temp = nan(1,2*num_frames);
             
             %create a zero matrix that's double the number of
             %frames
-            FRET_store_temp = nan(1,2*num_frames);
             
-            
-            %replace the indices in the FRET_store_temp vector that
-            %correspond to the FRET aligned to mitosis with the
-            %FRET values
+            %picomolar for 5900 pM
+            % dynamic range is 1.55-1.7, use this to get upper and lower
+            % limits of range
             FRET_store_temp(num_frames-first_mit:end-first_mit-1)=FRET;
-            FRET_align = [FRET_align;FRET_store_temp];
+            
+            if c < 3
+                
+                if i > 10
+                    FRET_align = [FRET_align;FRET_store_temp];
+                end
+                
+            else
+                
+                if i > 140
+                    FRET_align = [FRET_align;FRET_store_temp];
+                end
+            end
             
         end
         
@@ -88,29 +90,42 @@ for c=conditions_to_plot
     
     %store these for each well
     FRET_mean = mean(FRET_align,1,'omitnan');
+    
+    if c==1
+        r_min = 4.13;
+        r_max_mid = r_min*1.55;
+        r_max_upper = r_min*1.45;
+        r_max_lower = r_min*1.65;
+    end
+    
+    
     if isempty(FRET_mean)
         continue
     end
     
-    plot(frame_align./5, smooth(FRET_mean),'Color',colors_cell{c},'DisplayName', condition_cell{c},'LineWidth',2)
-    hold on
-    axis([-1 3 y_min y_max])
-    legend()
+    %Conversion to zinc
+    zinc_mean = 5300 * ((FRET_mean((num_frames-20):(num_frames+75)) - r_min)/(r_max_mid-r_min)).^(1/0.29);
     
-    all_FRET_mean  = [all_FRET_mean;FRET_mean];
+    resting_zinc_before = mean(zinc_mean(1:10));
+    
+    curve1 = 5300 * ((FRET_mean((num_frames-20):(num_frames+75)) - r_min)/(r_max_upper-r_min)).^(1/0.29);
+    curve2 = 5300 * ((FRET_mean((num_frames-20):(num_frames+75)) - r_min)/(r_max_lower-r_min)).^(1/0.29);
+    x2 = [frame_align((num_frames-20):(num_frames+75)), fliplr(frame_align((num_frames-20):(num_frames+75)))];
+    inBetween = [curve1, fliplr(curve2)];
+    fill(x2/5, inBetween, 'g','FaceAlpha',0.2, 'FaceColor',colors_cell{c}, 'EdgeAlpha',0);
+    hold on;
+    
+    plot(frame_align((num_frames-20):(num_frames+75))./5, smooth(zinc_mean),'Color',colors_cell{c},'DisplayName', condition_cell{c},'LineWidth',2)
+    hold on
+    yline(resting_zinc_before,'--','Color',colors_cell{c},'LineWidth',2)
+    title([{'\fontsize{18}'}; {upper(cell_type)}])
+    xlabel('\fontsize{12}Time (hours)')
+    ylabel('\fontsize{16}[Zn^2^+] (pM)')
+    ax = gca;
+    ylim([0,3000])
+    ax.FontSize = 16;
     
 end
 
-writematrix(all_FRET_mean, ['mean_FRET_aligned_',cell_type]); 
 
-%find the number of cells that exist at a given frame and sum them
-%together to get n
 
-xline(0,'--','DisplayName','Mitosis')
-title([{'\fontsize{20}Resting FRET - '}; {upper(cell_type)}])
-xlabel('\fontsize{12}Time (hours)')
-ylabel('\fontsize{16}Mean FRET Ratio')
-legend('off')
-set(gcf, 'Position',  [100, 100, 200, 400])
-ax = gca;
-ax.FontSize = 16; 

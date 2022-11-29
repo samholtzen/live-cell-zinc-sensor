@@ -65,19 +65,7 @@ for c=conditions_to_plot
     axis([-5 (num_frames-media_change)/5 y_min y_max])
     hold on
     
-    mean_FRET_before = mean(FRET_mean(media_change-30:media_change-1),'all','omitnan');
-    FRET_half_max = (mean(FRET_maximum,'omitnan') + mean_FRET_before)/2;
-    
-    mean_FRET_after = FRET_mean(media_change:end-30);
-    
-    FRET_after_sub = mean_FRET_after - FRET_half_max;
-    
-    FRET_pos = FRET_after_sub(ind_max:end) > 0;
-    t_half = find(FRET_pos,1,'last');
-    
-    FRET_at_half = FRET_mean(t_half+media_change);
-    
-    scatter(t_half/5, FRET_at_half);
+
 end
 
 xline(0,'--','DisplayName','Media Change')

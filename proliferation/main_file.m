@@ -92,6 +92,16 @@ for i=1:length(filename)
     exportgraphics(gcf,[output_str,'/',experiment_date,'_resting_fret_aligned_skinny_', sensor,'_', cell_type, '.png'],'Resolution',300)
     close(gcf)
     
+    step2b_subsample_mean_align
+    savefig(gcf,[output_str,'/',experiment_date,'_subsample_mean_align_', sensor,'_', cell_type, '.fig'])
+    exportgraphics(gcf,[output_str,'/',experiment_date,'_subsample_mean_align_', sensor,'_', cell_type, '.png'],'Resolution',300)
+    close(gcf)
+    
+    step2c_mean_align_resting_dash
+    savefig(gcf,[output_str,'/',experiment_date,'_align_resting_dash_', sensor,'_', cell_type, '.fig'])
+    exportgraphics(gcf,[output_str,'/',experiment_date,'_align_resting_dash_', sensor,'_', cell_type, '.png'],'Resolution',300)
+    close(gcf)
+    
     %Run step3_all_tracks_all_treatments_aligned_first_mit
     step3_all_tracks_all_treatments_aligned_first_mit
     savefig(gcf,[output_str,'/',experiment_date,'_all_tracks_fret_aligned_mitosis_', sensor,'_', cell_type '.fig'])

@@ -1,7 +1,7 @@
-%this one takes the signals and plots them aligned to mitosis to visualize
-%average FRET curve after mitosis
-all_FRET_mean = [];
+
 rng(1)
+
+out_cell = [];
 
 for c=conditions_to_plot
     
@@ -45,16 +45,7 @@ for c=conditions_to_plot
     %create frame fector
     frame_vec = 1:num_frames;
     
-    % Take the average of 500 of the tracks to save on time
-    if length(filtered_mitosis) > 500
-        
-        rand_tracks = randi(length(filtered_mitosis),1,500);
-        
-    else
-        
-        rand_tracks = 1:length(filtered_mitosis);
-        
-    end
+    rand_tracks = randi(numel(filtered_mitosis),1,1000);
     
     for track = rand_tracks
         
@@ -67,17 +58,28 @@ for c=conditions_to_plot
         for i=mitoses
             
             first_mit = i;
+            FRET_store_temp = nan(1,2*num_frames);
             
             %create a zero matrix that's double the number of
             %frames
-            FRET_store_temp = nan(1,2*num_frames);
             
-            
-            %replace the indices in the FRET_store_temp vector that
-            %correspond to the FRET aligned to mitosis with the
-            %FRET values
+            %picomolar for 5900 pM
+            % dynamic range is 1.55-1.7, use this to get upper and lower
+            % limits of range
             FRET_store_temp(num_frames-first_mit:end-first_mit-1)=FRET;
-            FRET_align = [FRET_align;FRET_store_temp];
+            
+            if c < 3
+                
+                if i > 10
+                    FRET_align = [FRET_align;FRET_store_temp];
+                end
+                
+            else
+                
+                if i > 140
+                    FRET_align = [FRET_align;FRET_store_temp];
+                end
+            end
             
         end
         
@@ -88,29 +90,41 @@ for c=conditions_to_plot
     
     %store these for each well
     FRET_mean = mean(FRET_align,1,'omitnan');
+    
+    if c==1
+        r_min = 4.13;
+        r_max_mid = r_min*1.55;
+        r_max_upper = r_min*1.45;
+        r_max_lower = r_min*1.65;
+    end
+    
+    
     if isempty(FRET_mean)
         continue
     end
     
-    plot(frame_align./5, smooth(FRET_mean),'Color',colors_cell{c},'DisplayName', condition_cell{c},'LineWidth',2)
-    hold on
-    axis([-1 3 y_min y_max])
-    legend()
+    around_mitosis = (num_frames-20):(num_frames+75);
     
-    all_FRET_mean  = [all_FRET_mean;FRET_mean];
+    %Conversion to zinc
+    zinc_mean = 5300 * ((FRET_mean(around_mitosis) - r_min)/(r_max_mid-r_min)).^(1/0.29);
+    zinc_max = 5300 * ((FRET_mean(around_mitosis) - r_min)/(r_max_upper-r_min)).^(1/0.29);
+    zinc_min = 5300 * ((FRET_mean(around_mitosis) - r_min)/(r_max_lower-r_min)).^(1/0.29);
+    
+    resting_zinc_mean = mean(zinc_mean(1:10));
+    resting_zinc_max = mean(zinc_max(1:10));
+    resting_zinc_min = mean(zinc_min(1:10));
+    
+    peak_zinc_mean = max(zinc_mean(20:40),[], 'omitnan');
+    peak_zinc_max = max(zinc_max(20:40),[], 'omitnan');
+    peak_zinc_min = max(zinc_min(20:40),[], 'omitnan');
+    
+    resting_store = [resting_zinc_min; resting_zinc_mean; resting_zinc_max];
+    peak_store = [peak_zinc_min; peak_zinc_mean; peak_zinc_max];
+    
+    out_cell = [out_cell;[resting_store,peak_store]];
+    
     
 end
 
-writematrix(all_FRET_mean, ['mean_FRET_aligned_',cell_type]); 
 
-%find the number of cells that exist at a given frame and sum them
-%together to get n
 
-xline(0,'--','DisplayName','Mitosis')
-title([{'\fontsize{20}Resting FRET - '}; {upper(cell_type)}])
-xlabel('\fontsize{12}Time (hours)')
-ylabel('\fontsize{16}Mean FRET Ratio')
-legend('off')
-set(gcf, 'Position',  [100, 100, 200, 400])
-ax = gca;
-ax.FontSize = 16; 

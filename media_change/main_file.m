@@ -70,14 +70,19 @@ for i=1:length(filename)
 %     savefig(gcf,[output_str,'/',experiment_date,'_mitosis_red_dots_', sensor,'_', cell_type, '.fig'])
 %     exportgraphics(gcf,[output_str,'/',experiment_date,'_mitosis_red_dots_', sensor,'_', cell_type, '.png'],'Resolution',300)
 %     close(gcf)
-%     
-%     %Run step1_resting_FRET_all_treatments_asynchronous
-%     step1_resting_FRET_all_treatments_asynchronous
-%     savefig(gcf,[output_str,'/',experiment_date,'_resting_fret_asynchronous_', sensor,'_', cell_type, '.fig'])
-%     exportgraphics(gcf,[output_str,'/',experiment_date,'_resting_fret_asynchronous_', sensor,'_', cell_type, '.png'],'Resolution',300)
-%     close(gcf)
-%     
-%     %Run step2_resting_FRET_all_treatments_align
+    
+    %Run step1_resting_FRET_all_treatments_asynchronous
+    step1_resting_FRET_all_treatments_asynchronous
+    savefig(gcf,[output_str,'/',experiment_date,'_resting_fret_asynchronous_', sensor,'_', cell_type, '.fig'])
+    exportgraphics(gcf,[output_str,'/',experiment_date,'_resting_fret_asynchronous_', sensor,'_', cell_type, '.png'],'Resolution',300)
+    close(gcf)
+    
+    step2e_zinc_estimation
+    savefig(gcf,[output_str,'/',experiment_date,'_estimated_zinc_asynchronous_', sensor,'_', cell_type, '.fig'])
+    exportgraphics(gcf,[output_str,'/',experiment_date,'_estimated_zinc_asynchronous_', sensor,'_', cell_type, '.png'],'Resolution',300)
+    close(gcf)
+    
+    %Run step2_resting_FRET_all_treatments_align
 %     step2_mean_resting_FRET_all_treatments_align
 %     set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 %     savefig(gcf,[output_str,'/',experiment_date,'_resting_fret_align_', sensor,'_', cell_type, '.fig'])

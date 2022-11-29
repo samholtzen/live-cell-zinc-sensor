@@ -92,16 +92,24 @@ for c=conditions_to_plot
         continue
     end
     
-    plot(frame_align./5, smooth(FRET_mean),'Color',colors_cell{c},'DisplayName', condition_cell{c},'LineWidth',2)
-    hold on
-    axis([-1 3 y_min y_max])
-    legend()
+    
+    for i=1:10
+        
+        
+        rand_tracks = randi(size(FRET_align,1),200,1);
+        FRET_mean = mean(FRET_align(rand_tracks,:),1,'omitnan');
+        plot(frame_align./5, smooth(FRET_mean),'Color',colors_cell{c},'DisplayName', condition_cell{c},'LineWidth',1)
+        hold on
+        axis([-4 15 y_min y_max])
+        legend()
+        
+    end
     
     all_FRET_mean  = [all_FRET_mean;FRET_mean];
     
 end
 
-writematrix(all_FRET_mean, ['mean_FRET_aligned_',cell_type]); 
+writematrix(all_FRET_mean, ['mean_FRET_aligned_',cell_type]);
 
 %find the number of cells that exist at a given frame and sum them
 %together to get n
@@ -111,6 +119,6 @@ title([{'\fontsize{20}Resting FRET - '}; {upper(cell_type)}])
 xlabel('\fontsize{12}Time (hours)')
 ylabel('\fontsize{16}Mean FRET Ratio')
 legend('off')
-set(gcf, 'Position',  [100, 100, 200, 400])
+set(gcf, 'Position',  [500, 500, 400, 800])
 ax = gca;
-ax.FontSize = 16; 
+ax.FontSize = 16;

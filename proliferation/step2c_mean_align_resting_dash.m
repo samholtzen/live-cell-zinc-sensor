@@ -1,12 +1,12 @@
-%this one takes the signals and plots them aligned to mitosis to visualize
-%average FRET curve after mitosis
-all_FRET_mean = [];
+
 rng(1)
 
 for c=conditions_to_plot
     
-    condition_index = find(conditions_to_plot == c);
+
     
+    condition_index = find(conditions_to_plot == c);
+
     FRET_align = [];
     CFP_store = [];
     YFP_store = [];
@@ -44,17 +44,8 @@ for c=conditions_to_plot
     
     %create frame fector
     frame_vec = 1:num_frames;
-    
-    % Take the average of 500 of the tracks to save on time
-    if length(filtered_mitosis) > 500
-        
-        rand_tracks = randi(length(filtered_mitosis),1,500);
-        
-    else
-        
-        rand_tracks = 1:length(filtered_mitosis);
-        
-    end
+        rand_tracks = randi(numel(filtered_mitosis),1,500);
+
     
     for track = rand_tracks
         
@@ -67,17 +58,25 @@ for c=conditions_to_plot
         for i=mitoses
             
             first_mit = i;
+            FRET_store_temp = nan(1,2*num_frames);
             
             %create a zero matrix that's double the number of
             %frames
-            FRET_store_temp = nan(1,2*num_frames);
             
-            
-            %replace the indices in the FRET_store_temp vector that
-            %correspond to the FRET aligned to mitosis with the
-            %FRET values
             FRET_store_temp(num_frames-first_mit:end-first_mit-1)=FRET;
-            FRET_align = [FRET_align;FRET_store_temp];
+            
+            if c < 3
+                
+                if i > 10
+                    FRET_align = [FRET_align;FRET_store_temp];
+                end
+                
+            else
+            
+                if i > 140
+                    FRET_align = [FRET_align;FRET_store_temp];
+                end
+            end
             
         end
         
@@ -88,29 +87,27 @@ for c=conditions_to_plot
     
     %store these for each well
     FRET_mean = mean(FRET_align,1,'omitnan');
+
+    
+    
     if isempty(FRET_mean)
         continue
     end
     
+    resting_FRET_before = mean(FRET_mean(num_frames-20:num_frames-10));
+    
     plot(frame_align./5, smooth(FRET_mean),'Color',colors_cell{c},'DisplayName', condition_cell{c},'LineWidth',2)
     hold on
-    axis([-1 3 y_min y_max])
-    legend()
-    
-    all_FRET_mean  = [all_FRET_mean;FRET_mean];
-    
+    yline(resting_FRET_before,'--','Color',colors_cell{c},'LineWidth',2)
+    axis([-4 15 4 6])
+    title([{'\fontsize{18}Early Mitosis - '}; {upper(cell_type)}])
+    xlabel('\fontsize{12}Time (hours)')
+    ylabel('\fontsize{16}Mean FRET Ratio')
+    legend('off')
+    ax = gca;
+    ax.FontSize = 16;
+
 end
 
-writematrix(all_FRET_mean, ['mean_FRET_aligned_',cell_type]); 
 
-%find the number of cells that exist at a given frame and sum them
-%together to get n
 
-xline(0,'--','DisplayName','Mitosis')
-title([{'\fontsize{20}Resting FRET - '}; {upper(cell_type)}])
-xlabel('\fontsize{12}Time (hours)')
-ylabel('\fontsize{16}Mean FRET Ratio')
-legend('off')
-set(gcf, 'Position',  [100, 100, 200, 400])
-ax = gca;
-ax.FontSize = 16; 
