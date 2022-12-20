@@ -1,5 +1,5 @@
 # Live-Cell Zinc Sensor Pipeline
-##### SCRIPTS USED IN PUBLICATION “HUMAN CELLS EXPERIENCE A ZN2+ IN EARLY G1” BY RAKSHIT & HOLTZEN ET AL
+##### SCRIPTS USED IN PUBLICATION “HUMAN CELLS EXPERIENCE A ZN<sup>2+</sup> PULSE IN EARLY G1” BY RAKSHIT & HOLTZEN ET AL
 ## Introduction
 ### Long-term live-cell free zinc measurements
 Many groups have done several population-level analyses of zinc throughout the cell cycle, but very few if any have published on long-term live-cell zinc measurements in asynchronously cycling cells. This pipeline will aid in analyzing long-term live-cell imaging of cells expressing the Zap suite of genetically encoded FRET sensors for measuring free zinc.
