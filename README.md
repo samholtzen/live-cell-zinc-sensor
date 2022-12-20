@@ -23,7 +23,7 @@ The main_file.m is the wrapper file that controls the pipeline. This includes al
 
 There are several switch/case expressions that will change the parameters of analysis based on the name of your input. For example, if you marked the struct_cell file with the cell type of ‘scr’, the switch/case expression will check if the cell type matches any known cases, and if it does, it will assign parameters for color, treatment conditions, and what conditions you want to plot. If your cell type does not show up here, you may add more cases as needed.
 
-The last parameter that is set before running the scripts is the FRET sensor filter. The dynamic range of the ZapCV2 sensor lies somewhere between 3 and 8 units, which means that anything beyond that is most likely aberrantly expressing cells; however, if you have a validated sensor that has a different dynamic range, change the parameters to the minimum and maximum value allowed by your sensor.
+The last parameter that is set before running the scripts is the FRET sensor filter. The signal range of the ZapCV2 sensor lies somewhere between 3 and 8 units, which means that anything beyond that is most likely aberrantly expressing cells; however, if you have a validated sensor that has a different signal range, change the parameters to the minimum and maximum value allowed by your sensor.
 ### Running the Pipeline
 #### Step 1: Combining individual folders
 To combine the subfolders and subfiles into one structure, you should use the combine_folders.m file. If you used EllipTrack locally instead of on the computing cluster, you can skip this step. Below are the instructions for processing an entire directory copied from the computing cluster.
