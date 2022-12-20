@@ -1,10 +1,13 @@
-
+%% Selecting files to analyze
 clearvars
 [filename,path] = uigetfile('MultiSelect','on');
 
 if ~iscell(filename)
+    % Workaround for the load function 
     filename = {filename};
 end
+
+
 
 for i=1:length(filename)
     
@@ -52,9 +55,7 @@ for i=1:length(filename)
     end
     
     output_str = [sensor,'_',cell_type,'_','output'];
-    if ~exist(output_str,'dir')
-        mkdir(output_str)
-    end
+
     
     
     % Run parameters for filtering YFP signal. These are empirically tested to
@@ -66,32 +67,38 @@ for i=1:length(filename)
     y_min = 3.5;
     y_max = 7;
     
+%% Uncomment below to export graphs  
+
+%     if ~exist(output_str,'dir')
+%         mkdir(output_str)
+%     end
+
 %     step0_mit_red_dots
 %     savefig(gcf,[output_str,'/',experiment_date,'_mitosis_red_dots_', sensor,'_', cell_type, '.fig'])
 %     exportgraphics(gcf,[output_str,'/',experiment_date,'_mitosis_red_dots_', sensor,'_', cell_type, '.png'],'Resolution',300)
 %     close(gcf)
-    
-    %Run step1_resting_FRET_all_treatments_asynchronous
-    step1_resting_FRET_all_treatments_asynchronous
-    savefig(gcf,[output_str,'/',experiment_date,'_resting_fret_asynchronous_', sensor,'_', cell_type, '.fig'])
-    exportgraphics(gcf,[output_str,'/',experiment_date,'_resting_fret_asynchronous_', sensor,'_', cell_type, '.png'],'Resolution',300)
-    close(gcf)
-    
-    step2e_zinc_estimation
-    savefig(gcf,[output_str,'/',experiment_date,'_estimated_zinc_asynchronous_', sensor,'_', cell_type, '.fig'])
-    exportgraphics(gcf,[output_str,'/',experiment_date,'_estimated_zinc_asynchronous_', sensor,'_', cell_type, '.png'],'Resolution',300)
-    close(gcf)
-    
-    %Run step2_resting_FRET_all_treatments_align
+%     
+%     %Run step1_resting_FRET_all_treatments_asynchronous
+%     step1_resting_FRET_all_treatments_asynchronous
+%     savefig(gcf,[output_str,'/',experiment_date,'_resting_fret_asynchronous_', sensor,'_', cell_type, '.fig'])
+%     exportgraphics(gcf,[output_str,'/',experiment_date,'_resting_fret_asynchronous_', sensor,'_', cell_type, '.png'],'Resolution',300)
+%     close(gcf)
+%     
+%     step2e_zinc_estimation
+%     savefig(gcf,[output_str,'/',experiment_date,'_estimated_zinc_asynchronous_', sensor,'_', cell_type, '.fig'])
+%     exportgraphics(gcf,[output_str,'/',experiment_date,'_estimated_zinc_asynchronous_', sensor,'_', cell_type, '.png'],'Resolution',300)
+%     close(gcf)
+%     
+%     %Run step2_resting_FRET_all_treatments_align
 %     step2_mean_resting_FRET_all_treatments_align
 %     set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 %     savefig(gcf,[output_str,'/',experiment_date,'_resting_fret_align_', sensor,'_', cell_type, '.fig'])
 %     exportgraphics(gcf,[output_str,'/',experiment_date,'_resting_fret_align_', sensor,'_', cell_type, '.png'],'Resolution',300)
 %     close(gcf)
-    
-    %Run step4_zinc_spike_spreadsheet
-    step4_media_change_spreadsheet
-    
-    step5_additional_media_change
+%     
+%     %Run step4_zinc_spike_spreadsheet
+%     step4_media_change_spreadsheet
+%     
+%     step5_additional_media_change
     
 end

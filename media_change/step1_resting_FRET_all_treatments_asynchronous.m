@@ -1,5 +1,4 @@
-%takes in combined signals and plots mean FRET in asynchronous cells
-%(surrogate for resting FRET, this variable gets used in every script downstream)
+rng(1)
 
 for c=conditions_to_plot
     
@@ -51,16 +50,11 @@ for c=conditions_to_plot
     if isempty(FRET_mean)
         continue
     end
+    
     SEM = std(filtered_FRET,0,1,'omitnan')/sqrt(size(filtered_FRET,1));
     [FRET_maximum,ind_max] = max(FRET_mean(:,media_change:end),[],2,'omitnan');
     [FRET_minimum,ind_min]= min(FRET_mean(:,media_change:end),[],2,'omitnan');
     
-    %     curve1 = FRET_mean + SEM;
-    %     curve2 = FRET_mean - SEM;
-    %     x2 = [frame_vec, fliplr(frame_vec)];
-    %     inBetween = [curve1, fliplr(curve2)];
-    %     fill((x2-media_change)/5, inBetween, 'g','FaceAlpha',0.2, 'FaceColor',colors_cell{c}, 'EdgeAlpha',0);
-    %     hold on
     plot((frame_vec-media_change)./5, smooth(FRET_mean),'Color',colors_cell{c},'LineWidth',2,'DisplayName',condition_cell{c})
     axis([-5 (num_frames-media_change)/5 y_min y_max])
     hold on

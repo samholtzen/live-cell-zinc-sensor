@@ -30,4 +30,4 @@ end
 
 all_signals = all_signals_temp;
 
-%save('signals.mat','all_signals','-v7.3')
+save('signals.mat','all_signals','-v7.3')

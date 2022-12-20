@@ -2,12 +2,12 @@
 % Navigate to the file that was saved from the "combine_folders.m" script
 % and select the "signals.mat" file it saved.
 
-% [filename,path] = uigetfile();
-% 
-% cell_type = input('What cell type is this? Input a string.');
-% date = input('What date was this experiment conducted? Input a number in the format YYYYMMDD.');
-% 
-% load(fullfile(path,filename))
+[filename,path] = uigetfile();
+
+cell_type = input('What cell type is this? Input a string.');
+date = input('What date was this experiment conducted? Input a number in the format YYYYMMDD.');
+
+load(fullfile(path,filename))
 
 %% Initialize the storage cell array
 
@@ -49,4 +49,4 @@ for i = 1:num_rows
     
 end
 
-% save(fullfile(path,[num2str(date),'_',cell_type,'_struct_cell.mat']),'struct_cell')
+save(fullfile(path,[num2str(date),'_',cell_type,'_struct_cell.mat']),'struct_cell')

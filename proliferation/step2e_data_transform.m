@@ -25,6 +25,19 @@ for c=conditions_to_plot
             end
         end
     end
+    
+        if ifcrop
+        
+        CFP_store = CFP_store(:,1:180);
+        YFP_store = YFP_store(:,1:180);
+        H2B_store = H2B_store(:,1:180);
+        
+        for ii = 1:numel(mitosis_store)
+            mitosis_store{ii} = mitosis_store{ii}(mitosis_store{ii} < 180);
+        end
+        
+        end
+    
     num_frames = size(CFP_store, 2);
     
     current_FRET = YFP_store./CFP_store;
@@ -45,9 +58,9 @@ for c=conditions_to_plot
     %create frame fector
     frame_vec = 1:num_frames;
     
-    rand_tracks = randi(numel(filtered_mitosis),1,1000);
+    rand_tracks = randi(numel(filtered_mitosis),1,2000);
     
-    for track = 1:numel(filtered_mitosis)
+    for track = 1:length(filtered_mitosis)
         
         %get the signals out from the "store" variables
         mitoses = filtered_mitosis{track};
@@ -76,7 +89,7 @@ for c=conditions_to_plot
                 
             else
                 
-                if i > 140
+                if i > 120
                     FRET_align = [FRET_align;FRET_store_temp];
                 end
             end
@@ -92,10 +105,9 @@ for c=conditions_to_plot
     FRET_mean = mean(FRET_align,1,'omitnan');
     
     if c==1
-        r_min = 4.13;
+        r_min = min(mean(filtered_FRET,1,'omitnan'))-0.01;
         r_max_mid = r_min*1.55;
-        r_max_upper = r_min*1.45;
-        r_max_lower = r_min*1.65;
+        continue
     end
     
     
@@ -103,26 +115,21 @@ for c=conditions_to_plot
         continue
     end
     
+    FRET_to_convert = FRET_mean((num_frames-20):(num_frames+55));
+    
     %Conversion to zinc
-    zinc_mean = 5300 * ((FRET_mean((num_frames-20):(num_frames+75)) - r_min)/(r_max_mid-r_min)).^(1/0.29);
+    zinc_mean = 5300 * ((FRET_to_convert - r_min)./(r_max_mid-FRET_to_convert)).^(1/0.29);
     
     resting_zinc_before = mean(zinc_mean(1:10));
     
-    curve1 = 5300 * ((FRET_mean((num_frames-20):(num_frames+75)) - r_min)/(r_max_upper-r_min)).^(1/0.29);
-    curve2 = 5300 * ((FRET_mean((num_frames-20):(num_frames+75)) - r_min)/(r_max_lower-r_min)).^(1/0.29);
-    x2 = [frame_align((num_frames-20):(num_frames+75)), fliplr(frame_align((num_frames-20):(num_frames+75)))];
-    inBetween = [curve1, fliplr(curve2)];
-    fill(x2/5, inBetween, 'g','FaceAlpha',0.2, 'FaceColor',colors_cell{c}, 'EdgeAlpha',0);
-    hold on;
-    
-    plot(frame_align((num_frames-20):(num_frames+75))./5, smooth(zinc_mean),'Color',colors_cell{c},'DisplayName', condition_cell{c},'LineWidth',2)
+    semilogy(frame_align((num_frames-20):(num_frames+55))./5, smooth(zinc_mean),'Color',colors_cell{c},'DisplayName', condition_cell{c},'LineWidth',2)
     hold on
     yline(resting_zinc_before,'--','Color',colors_cell{c},'LineWidth',2)
     title([{'\fontsize{18}'}; {upper(cell_type)}])
     xlabel('\fontsize{12}Time (hours)')
     ylabel('\fontsize{16}[Zn^2^+] (pM)')
+    ylim([0.001,100000])
     ax = gca;
-    ylim([0,3000])
     ax.FontSize = 16;
     
 end

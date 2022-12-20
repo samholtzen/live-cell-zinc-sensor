@@ -1,8 +1,8 @@
-function [all_cherry, all_venus, all_H2B, all_mitosis, num_frames, well_ids] = link_two(signals)
+function [all_FP1, all_FP2, all_NM, all_mitosis, num_frames, well_ids] = link_two(signals)
 
-all_cherry = [];
-all_venus = [];
-all_H2B = [];
+all_FP1 = [];
+all_FP2 = [];
+all_NM = [];
 all_mitosis = [];
 well_ids = [];
 
@@ -22,9 +22,9 @@ for c=1:numel(signals)
         
         % create structures to save data
         num_frames = length(cell_track{1}.ellipse_id);
-        all_full_traces_mCherry = nan(0, num_frames); % each row represents a full trace
-        all_full_traces_mVenus = nan(0, num_frames); % each row represents a full trace
-        all_full_traces_H2B = nan(0, num_frames); % each row represents a full trace
+        all_full_traces_FP1 = nan(0, num_frames); % each row represents a full trace
+        all_full_traces_FP2 = nan(0, num_frames); % each row represents a full trace
+        all_full_traces_NM = nan(0, num_frames); % each row represents a full trace
         
         all_mitosis_temp = cell(0, 1); % each element stores the mitosis frame ID.
         
@@ -43,7 +43,7 @@ for c=1:numel(signals)
                 continue;
             end
             % store the information for the current full trace
-            curr_id = i; curr_full_trace_mCherry = nan(1, num_frames); curr_mitosis = []; curr_full_trace_mVenus = nan(1, num_frames);curr_full_trace_H2B = nan(1, num_frames);
+            curr_id = i; curr_full_trace_FP1 = nan(1, num_frames); curr_mitosis = []; curr_full_trace_FP2 = nan(1, num_frames);curr_full_trace_NM = nan(1, num_frames);
             
             % iterate
             while 1
@@ -51,9 +51,9 @@ for c=1:numel(signals)
                 first_id = find(~isnan(cell_track{curr_id}.ellipse_id), 1, 'first');
                 last_id = find(~isnan(cell_track{curr_id}.ellipse_id), 1, 'last');
                 % change the following line for other signals
-                curr_full_trace_mCherry(first_id:last_id) = smooth(cell_track{curr_id}.CFP_cytoring_mean(first_id:last_id));
-                curr_full_trace_mVenus(first_id:last_id) = smooth(cell_track{curr_id}.YFP_cytoring_mean(first_id:last_id));
-                curr_full_trace_H2B(first_id:last_id) = smooth(cell_track{curr_id}.H2B_nuc_mean(first_id:last_id));
+                curr_full_trace_FP1(first_id:last_id) = smooth(cell_track{curr_id}.CFP_cytoring_mean(first_id:last_id));
+                curr_full_trace_FP2(first_id:last_id) = smooth(cell_track{curr_id}.YFP_cytoring_mean(first_id:last_id));
+                curr_full_trace_NM(first_id:last_id) = smooth(cell_track{curr_id}.H2B_nuc_mean(first_id:last_id));
                 
                 % add mitosis Frame ID
                 if (last_id ~= num_frames)
@@ -66,9 +66,9 @@ for c=1:numel(signals)
                 % otherwise, search mother. Exit if there is no mother
                 curr_id = genealogy(curr_id);
                 if isnan(curr_id)
-                    all_full_traces_mCherry = cat(1, all_full_traces_mCherry, curr_full_trace_mCherry);
-                    all_full_traces_mVenus = cat(1, all_full_traces_mVenus, curr_full_trace_mVenus);
-                    all_full_traces_H2B = cat(1, all_full_traces_H2B, curr_full_trace_H2B);
+                    all_full_traces_FP1 = cat(1, all_full_traces_FP1, curr_full_trace_FP1);
+                    all_full_traces_FP2 = cat(1, all_full_traces_FP2, curr_full_trace_FP2);
+                    all_full_traces_NM = cat(1, all_full_traces_NM, curr_full_trace_NM);
                     well_ids = [well_ids;c];
                     
                     all_mitosis_temp = cat(1, all_mitosis_temp, {curr_mitosis});
@@ -76,9 +76,9 @@ for c=1:numel(signals)
                 end
             end
         end
-        all_cherry = [all_cherry;all_full_traces_mCherry];
-        all_venus = [all_venus;all_full_traces_mVenus];
-        all_H2B = [all_H2B;all_full_traces_mCherry];
+        all_FP1 = [all_FP1;all_full_traces_FP1];
+        all_FP2 = [all_FP2;all_full_traces_FP2];
+        all_NM = [all_NM;all_full_traces_FP1];
         all_mitosis = [all_mitosis; all_mitosis_temp];
     end
 end

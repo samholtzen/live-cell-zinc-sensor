@@ -1,6 +1,7 @@
 %This plots mitosis events as red dots over traces of FRET ratio in dark
 %gray
 rng(1)
+
 for c=conditions_to_plot
     
     condition_index = find(conditions_to_plot == c);
@@ -68,6 +69,7 @@ for c=conditions_to_plot
     if isempty(filtered_FRET)
         continue
     end
+    
     % Plot all random track FRET ratios
     subplot(2,round(length(conditions_to_plot)/2),condition_index)
     plot(frame_vec./5, filtered_FRET(rand_tracks,:), 'Color', [0.25 0.25 0.25]);

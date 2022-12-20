@@ -4,6 +4,10 @@ rng(1)
 
 for c=conditions_to_plot
     
+    if ismember(c, [1,2])
+        continue
+    end
+    
     condition_index = find(conditions_to_plot == c);
     
     FRET_align_first = [];
@@ -29,6 +33,14 @@ for c=conditions_to_plot
             end
         end
     end
+    
+    CFP_store = CFP_store(:,1:180);
+    YFP_store = YFP_store(:,1:180);
+    H2B_store = H2B_store(:,1:180);
+    for ii = 1:numel(mitosis_store)
+        mitosis_store{ii} = mitosis_store{ii}(mitosis_store{ii} < 180);
+    end
+    
     
     num_frames = size(CFP_store, 2);
     
@@ -76,9 +88,9 @@ for c=conditions_to_plot
             FRET_store_temp(num_frames-first_mit:end-first_mit-1)=FRET;
             if i < 60
                 FRET_align_first = [FRET_align_first;FRET_store_temp];
-            elseif i > 80 && i < 160
+            elseif i > 61 && i < 120
                 FRET_align_second = [FRET_align_second;FRET_store_temp];
-            elseif i > 160
+            elseif i > 120
                 FRET_align_third = [FRET_align_third;FRET_store_temp];
             end
             
@@ -99,19 +111,33 @@ for c=conditions_to_plot
         continue
     end
     
-    subplot(2,round(length(conditions_to_plot)/2),condition_index)
-    
-    
-    plot(frame_align./5, smooth(FRET_mean_first),'Color',[0.2,0.2,0.2],'DisplayName', 'Early Mitoses','LineWidth',2)
-    hold on
-    plot(frame_align./5, smooth(FRET_mean_second),'Color',[0.5,0.5,0.5],'DisplayName', 'Mid Mitoses','LineWidth',2)
-    hold on
-    plot(frame_align./5, smooth(FRET_mean_third),'Color',[0.7,0.7,0.7],'DisplayName', 'Late Mitoses','LineWidth',2)
-    hold on
-    axis([-5 15 y_min y_max])
+    subplot(1,3,1)
+    plot(frame_align./5, smooth(FRET_mean_first),'Color',colors_cell{c},'DisplayName', 'Early Mitoses','LineWidth',2)
+    axis([-5 11 y_min y_max])
+    resting_FRET_before = mean(FRET_mean_first(num_frames-20:num_frames-10));
+    yline(resting_FRET_before,'--','Color',colors_cell{c},'LineWidth',2)
     xline(0,'--','DisplayName','Mitosis')
-    title(['\fontsize{20}',condition_cell{c}])
-    legend()
+    title(['\fontsize{20}','Early Mitoses'])
+    hold on
+    
+    subplot(1,3,2)
+    plot(frame_align./5, smooth(FRET_mean_second),'Color',colors_cell{c},'DisplayName', 'Mid Mitoses','LineWidth',2)
+    axis([-5 11 y_min y_max])
+    resting_FRET_before = mean(FRET_mean_second(num_frames-20:num_frames-10));
+    yline(resting_FRET_before,'--','Color',colors_cell{c},'LineWidth',2)
+    xline(0,'--','DisplayName','Mitosis')
+    title(['\fontsize{20}','Mid Mitoses'])
+    hold on
+    
+    subplot(1,3,3)
+    plot(frame_align./5, smooth(FRET_mean_third),'Color',colors_cell{c},'DisplayName', 'Late Mitoses','LineWidth',2)
+    axis([-5 11 y_min y_max])
+    resting_FRET_before = mean(FRET_mean_third(num_frames-20:num_frames-10));
+    yline(resting_FRET_before,'--','Color',colors_cell{c},'LineWidth',2)
+    xline(0,'--','DisplayName','Mitosis')
+    title(['\fontsize{20}','Late Mitoses'])
+    hold on
+
     
     
 end

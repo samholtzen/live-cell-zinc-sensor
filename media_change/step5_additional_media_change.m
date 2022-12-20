@@ -40,6 +40,10 @@ for c=1:6
     
     filtered_FRET = current_FRET(filter_vec_2,:);
     
+    if c==1
+        r_min = min(mean(filtered_FRET,1,'omitnan'))-0.01;
+        r_max_mid = r_min*1.55;
+    end
     
     for i=1:20
         
@@ -65,8 +69,19 @@ for c=1:6
         
         settle_FRET = mean(FRET_mean(end-30:end));
         
+        mean_FRET_before = mean(FRET_mean(media_change-30:media_change-1),'all','omitnan');
+        
+        if settle_FRET >= r_max_mid || settle_FRET < r_min
+            zinc_settle = NaN;
+        else
+            zinc_settle = 5300 * ((settle_FRET - r_min)./(r_max_mid-settle_FRET)).^(1/0.29);
+
+        end
+        
+        zinc_before = 5300 * ((mean_FRET_before - r_min)./(r_max_mid-mean_FRET_before)).^(1/0.29);
+        
         table_conditions = [table_conditions;condition_cell{c}];
-        table_temp = table(FRET_maximum,FRET_minimum,out_max,settle_FRET,out_min,auc_FRET);
+        table_temp = table(FRET_maximum,FRET_minimum,out_max,settle_FRET,out_min,auc_FRET,zinc_before,zinc_settle);
         table_temp.table_conditions = repmat(condition_cell(c), size(table_temp.FRET_maximum));
         if ismember(c,[1,2,3])
             
@@ -74,7 +89,6 @@ for c=1:6
             
         elseif ismember(c,[4,5,6])
             
-            mean_FRET_before = mean(FRET_mean(media_change-30:media_change-1),'all','omitnan');
             FRET_half_max = (mean(FRET_maximum,'omitnan') + mean_FRET_before)/2;
             
             mean_FRET_after = FRET_mean(media_change:end-30);

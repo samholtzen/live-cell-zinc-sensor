@@ -1,9 +1,9 @@
-%takes in combined signals and plots mean FRET in asynchronous cells
-%(surrogate for resting FRET, this variable gets used in every script downstream)
+% To plot how many tracks exist in each condition over the entire movie
+
 rng(1)
-out_table = table();
+
 for c=1:6
-    coef_temp = [];
+    
     condition_index = find(conditions_to_plot == c);
     
     %loop through the columns (conditions)
@@ -41,7 +41,6 @@ for c=1:6
     
     
     current_FRET = YFP_store(filter_vec_1,:)./CFP_store(filter_vec_1,:);
-    current_mitosis = mitosis_store(filter_vec_1);
     %filter by appropriate FRET ratio and store the FRET for
     %math downstream
     
@@ -49,7 +48,6 @@ for c=1:6
     rand_tracks = randi(length(filtered_mitosis),1,500);
     
     filtered_FRET = current_FRET(filter_vec_2,:);
-    mitosis_filter = current_mitosis(filter_vec_2,:);
     frame_vec = 1:num_frames;
     
     nan_find = isnan(filtered_FRET);

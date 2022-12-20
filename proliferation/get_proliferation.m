@@ -1,6 +1,4 @@
 function proliferation_vec = get_proliferation(all_signals)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
 
 %initializing the storage vector
 existCell_well = [];

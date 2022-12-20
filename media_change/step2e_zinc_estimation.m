@@ -62,13 +62,13 @@ for c=conditions_to_plot
         continue
     end
     
-    %Conversion to zinc
-    zinc_mean = 5300 * ((FRET_mean - r_min)/(r_max_mid-r_min)).^(1/0.29);
+    %Conversion to zinc using the published equation
+    zinc_mean = 5300 * ((FRET_mean - r_min)./(r_max_mid-FRET_mean)).^(1/0.29);
     
     resting_zinc_before = mean(zinc_mean(1:10));
     
-    curve1 = 5300 * ((FRET_mean - r_min)/(r_max_upper-r_min)).^(1/0.29);
-    curve2 = 5300 * ((FRET_mean - r_min)/(r_max_lower-r_min)).^(1/0.29);
+    curve1 = 5300 * ((FRET_mean - r_min)./(r_max_upper-FRET_mean)).^(1/0.29);
+    curve2 = 5300 * ((FRET_mean - r_min)./(r_max_lower-FRET_mean)).^(1/0.29);
     x2 = [frame_vec, fliplr(frame_vec)];
     inBetween = [curve1, fliplr(curve2)];
     fill(x2/5, inBetween, 'g','FaceAlpha',0.2, 'FaceColor',colors_cell{c}, 'EdgeAlpha',0);
@@ -84,6 +84,7 @@ for c=conditions_to_plot
     ax.FontSize = 16;
     ylim([10^-2, 50000])
     xlim([-5,(num_frames-media_change)/5])
+    
 end
 
 

@@ -1,6 +1,6 @@
 function [all_full_traces_CFP, all_full_traces_YFP, all_full_traces_H2B, all_mitosis,num_frames] = link_mother_daughter(well,sensor)
-
-%extract data one track at a time
+% counterpart to "link_two.m" function. Links together all tracked mitosis events across the movie.
+% tracks stored here MUST be present from the beginning to the end.
 
 % create structures to save data
 num_frames = length(well{1}.ellipse_id);

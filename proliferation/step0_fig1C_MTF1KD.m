@@ -24,6 +24,18 @@ for c=conditions_to_plot
         end
     end
     
+    if ifcrop
+        
+        CFP_store = CFP_store(:,1:180);
+        YFP_store = YFP_store(:,1:180);
+        H2B_store = H2B_store(:,1:180);
+        
+        for ii = 1:numel(mitosis_store)
+            mitosis_store{ii} = mitosis_store{ii}(mitosis_store{ii} < 180);
+        end
+        
+    end
+    
     num_frames = size(CFP_store, 2);
         
     %initialize storage vectors

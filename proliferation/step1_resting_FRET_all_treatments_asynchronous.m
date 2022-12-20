@@ -1,6 +1,5 @@
 %takes in combined signals and plots mean FRET in asynchronous cells
 %(surrogate for resting FRET, this variable gets used in every script downstream)
-resting_FRET_downstream = [];
 
 for c=conditions_to_plot
     
@@ -28,6 +27,19 @@ for c=conditions_to_plot
         end
     end
     
+    if ifcrop
+        % Cropping out the last 60 frames of the movie to remove sections
+        % of tracks that were captured during contact inhibition
+        CFP_store = CFP_store(:,1:180);
+        YFP_store = YFP_store(:,1:180);
+        H2B_store = H2B_store(:,1:180);
+        
+        for ii = 1:numel(mitosis_store)
+            mitosis_store{ii} = mitosis_store{ii}(mitosis_store{ii} < 180);
+        end
+        
+    end
+    
     num_frames = size(CFP_store,2);
     
     %Calculate FRET
@@ -50,26 +62,24 @@ for c=conditions_to_plot
     frame_vec = 1:num_frames;
     
     %take the average FRET ratio to plot
-    FRET_mean = mean(filtered_FRET,1,'omitnan');
+    FRET_mean = median(filtered_FRET,1,'omitnan');
     
     if isempty(FRET_mean)
         %If there aren't enough tracks, skip it
         continue
     end
     
-%     SEM = std(filtered_FRET,0,1,'omitnan')/sqrt(size(filtered_FRET,1));
-%     
-%     
-%     curve1 = FRET_mean + SEM;
-%     curve2 = FRET_mean - SEM;
-%     x2 = [frame_vec, fliplr(frame_vec)];
-%     inBetween = [curve1, fliplr(curve2)];
-%     fill(x2/5, inBetween, 'g','FaceAlpha',0.2, 'FaceColor',colors_cell{c}, 'EdgeAlpha',0);
-%     hold on
+    %     SEM = std(filtered_FRET,0,1,'omitnan')/sqrt(size(filtered_FRET,1));
+    %
+    %
+    %     curve1 = FRET_mean + SEM;
+    %     curve2 = FRET_mean - SEM;
+    %     x2 = [frame_vec, fliplr(frame_vec)];
+    %     inBetween = [curve1, fliplr(curve2)];
+    %     fill(x2/5, inBetween, 'g','FaceAlpha',0.2, 'FaceColor',colors_cell{c}, 'EdgeAlpha',0);
+    %     hold on
     plot(frame_vec./5, smooth(FRET_mean),'Color',colors_cell{c},'LineWidth',2,'DisplayName',condition_cell{c})
     hold on
-    
-    resting_FRET_downstream = [resting_FRET_downstream mean(FRET_mean(60:120))];
     
 end
 

@@ -32,7 +32,7 @@ for c=conditions_to_plot
     hold on;
     
     % Plot data
-    plot(frame_vec./5, mean(proliferation_store./proliferation_store(:,1),1),'Color',colors_cell{c},'LineWidth',4,'DisplayName',condition_cell{c})
+    plot(frame_vec./5, mean(proliferation_store./proliferation_store(:,1),1), '--','Color',colors_cell{c},'LineWidth',4,'DisplayName',condition_cell{c})
     hold on
     
     

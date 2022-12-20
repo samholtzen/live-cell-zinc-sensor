@@ -1,5 +1,6 @@
-%This plots mitosis events as red dots over traces of FRET ratio in dark
-%gray
+% Standalone function that is used exactly as main_file.m to plot how the
+% mitosis events are distributed across the movie
+
 clearvars
 
 [filename,path] = uigetfile('MultiSelect','on');

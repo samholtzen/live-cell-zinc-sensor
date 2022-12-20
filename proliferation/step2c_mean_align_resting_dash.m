@@ -3,10 +3,10 @@ rng(1)
 
 for c=conditions_to_plot
     
-
+    
     
     condition_index = find(conditions_to_plot == c);
-
+    
     FRET_align = [];
     CFP_store = [];
     YFP_store = [];
@@ -24,6 +24,19 @@ for c=conditions_to_plot
                 mitosis_store = [mitosis_store; curr_struct.mitosis];
             end
         end
+    end
+    
+    if ifcrop
+        % Cropping out the last 60 frames of the movie to remove sections
+        % of tracks that were captured during contact inhibition
+        CFP_store = CFP_store(:,1:180);
+        YFP_store = YFP_store(:,1:180);
+        H2B_store = H2B_store(:,1:180);
+        
+        for ii = 1:numel(mitosis_store)
+            mitosis_store{ii} = mitosis_store{ii}(mitosis_store{ii} < 180);
+        end
+        
     end
     num_frames = size(CFP_store, 2);
     
@@ -44,8 +57,8 @@ for c=conditions_to_plot
     
     %create frame fector
     frame_vec = 1:num_frames;
-        rand_tracks = randi(numel(filtered_mitosis),1,500);
-
+    rand_tracks = randi(numel(filtered_mitosis),1,1000);
+    
     
     for track = rand_tracks
         
@@ -72,8 +85,8 @@ for c=conditions_to_plot
                 end
                 
             else
-            
-                if i > 140
+                
+                if i > 120
                     FRET_align = [FRET_align;FRET_store_temp];
                 end
             end
@@ -87,7 +100,7 @@ for c=conditions_to_plot
     
     %store these for each well
     FRET_mean = mean(FRET_align,1,'omitnan');
-
+    
     
     
     if isempty(FRET_mean)
@@ -99,14 +112,14 @@ for c=conditions_to_plot
     plot(frame_align./5, smooth(FRET_mean),'Color',colors_cell{c},'DisplayName', condition_cell{c},'LineWidth',2)
     hold on
     yline(resting_FRET_before,'--','Color',colors_cell{c},'LineWidth',2)
-    axis([-4 15 4 6])
+    axis([-4 11 4 6])
     title([{'\fontsize{18}Early Mitosis - '}; {upper(cell_type)}])
     xlabel('\fontsize{12}Time (hours)')
     ylabel('\fontsize{16}Mean FRET Ratio')
     legend('off')
     ax = gca;
     ax.FontSize = 16;
-
+    
 end
 
 

@@ -29,7 +29,12 @@ for c=conditions_to_plot
             end
         end
     end
-    
+    CFP_store = CFP_store(:,1:180);
+    YFP_store = YFP_store(:,1:180);
+    H2B_store = H2B_store(:,1:180);
+    for ii = 1:numel(mitosis_store)
+        mitosis_store{ii} = mitosis_store{ii}(mitosis_store{ii} < 180);
+    end
     num_frames = size(CFP_store, 2);
     %% Find and join mother/daughter pairs to create full lineage
     
@@ -46,9 +51,9 @@ for c=conditions_to_plot
     %loop through the cells in one condition
     min_YFP = mean(YFP_store,2,'omitnan');
     min_CFP = mean(CFP_store,2,'omitnan');
-
     
-
+    
+    
     
     
     current_FRET = YFP_store./CFP_store;
@@ -92,10 +97,10 @@ for c=conditions_to_plot
     
     subplot(2,round(length(conditions_to_plot)/2),condition_index)
     plot(((1:num_frames*2)-num_frames)./5, smooth(all_FRET_mean(condition_index,:)), 'Color',colors_cell{c},'LineWidth',5);
-    axis([-5 15 FRET_min FRET_max])
+    axis([-5 11 FRET_min FRET_max])
     title(['\fontsize{20}',condition_cell{c}])
     xlabel('\fontsize{12}Time (h)')
-    ylabel('\fontsize{16}Mean FRET Ratio')    
+    ylabel('\fontsize{16}Mean FRET Ratio')
     hold on
     
 end
